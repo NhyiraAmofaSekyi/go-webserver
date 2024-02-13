@@ -1,2 +1,4 @@
 .dockerignore
 .DS_Store
+go-webserver
+.gitignore
