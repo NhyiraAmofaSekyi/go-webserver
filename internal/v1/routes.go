@@ -11,7 +11,7 @@ import (
 func NewRouter() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/healthz", healthzHandler) // Note the path is just "/healthz" now
-	mux.HandleFunc("/secure", middleware.AuthMiddleware(secureHandler))
+	mux.HandleFunc("GET /healthz", healthzHandler) // Note the path is just "/healthz" now
+	mux.HandleFunc("GET /secure", middleware.AuthMiddleware(secureHandler))
 	return mux
 }

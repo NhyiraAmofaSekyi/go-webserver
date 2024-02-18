@@ -6,7 +6,7 @@ import (
 	"time"
 
 	v1 "github.com/NhyiraAmofaSekyi/go-webserver/internal/v1"
-	"github.com/NhyiraAmofaSekyi/go-webserver/utils"
+	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	corsEnabledMux := utils.CorsWrapper(mainMux)
 
 	srv := &http.Server{
-		Handler: corsEnabledMux, // Your wrapped handler
+		Handler: corsEnabledMux, // wrapped handler
 		Addr:    ":8080",        // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
