@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	middleware "github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
 	v1 "github.com/NhyiraAmofaSekyi/go-webserver/internal/v1"
-	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 )
 
 func main() {
@@ -21,10 +21,15 @@ func main() {
 	log.Println("server running on port 8080")
 	mainMux.Handle("GET /v1/", http.StripPrefix("/v1", v1.NewRouter()))
 
-	corsEnabledMux := utils.CorsWrapper(mainMux)
+	stack := middleware.CreateStack(
+		middleware.Logging,
+		middleware.CorsWrapper,
+	)
+
+	//corsEnabledMux := utils.CorsWrapper(mainMux)
 
 	server := &http.Server{
-		Handler: corsEnabledMux, // wrapped handler
+		Handler: stack(mainMux), // wrapped handler
 		Addr:    ":8080",        // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
