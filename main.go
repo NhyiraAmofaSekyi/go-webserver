@@ -19,7 +19,7 @@ func main() {
 	mainMux := http.NewServeMux()
 
 	log.Println("server running on port 8080")
-	mainMux.Handle("/v1/", http.StripPrefix("/v1", v1.NewRouter()))
+	mainMux.Handle("GET /v1/", http.StripPrefix("/v1", v1.NewRouter()))
 
 	corsEnabledMux := utils.CorsWrapper(mainMux)
 
