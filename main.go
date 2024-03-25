@@ -16,21 +16,20 @@ import (
 
 func main() {
 
-	mainMux := http.NewServeMux()
+	router := http.NewServeMux()
 
 	log.Println("server running on port 8080")
-	mainMux.Handle("GET /v1/", http.StripPrefix("/v1", v1.NewRouter()))
+	v1 := v1.NewRouter()
+	router.Handle("GET /v1/", http.StripPrefix("/v1", v1))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
 		middleware.CorsWrapper,
 	)
 
-	//corsEnabledMux := utils.CorsWrapper(mainMux)
-
 	server := &http.Server{
-		Handler: stack(mainMux), // wrapped handler
-		Addr:    ":8080",        // Listen address
+		Handler: stack(router), // wrapped handler
+		Addr:    ":8080",       // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
 		WriteTimeout:      10 * time.Second,

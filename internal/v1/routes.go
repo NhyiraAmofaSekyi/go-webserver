@@ -9,9 +9,9 @@ import (
 
 // NewRouter returns a new http.ServeMux with v1 routes configured
 func NewRouter() *http.ServeMux {
-	mux := http.NewServeMux()
+	v1Router := http.NewServeMux()
 
-	mux.HandleFunc("GET /healthz", healthzHandler) // Note the path is just "/healthz" now
-	mux.HandleFunc("GET /secure", middleware.AuthMiddleware(secureHandler))
-	return mux
+	v1Router.HandleFunc("GET /healthz", healthzHandler) // Note the path is just "/healthz" now
+	v1Router.HandleFunc("GET /secure", middleware.AuthMiddleware(secureHandler))
+	return v1Router
 }
