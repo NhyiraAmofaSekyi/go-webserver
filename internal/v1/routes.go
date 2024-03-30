@@ -13,5 +13,6 @@ func NewRouter() *http.ServeMux {
 
 	v1Router.HandleFunc("GET /healthz", healthzHandler) // Note the path is just "/healthz" now
 	v1Router.HandleFunc("GET /secure", middleware.AuthMiddleware(secureHandler))
+
 	return v1Router
 }

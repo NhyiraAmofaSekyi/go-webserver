@@ -60,7 +60,7 @@ func main() {
 
 	// Attempt to gracefully shut down the server.
 	if err := server.Shutdown(ctx); err != nil {
-		fmt.Errorf("server shutdown failed: %v", err)
+		fmt.Printf("server shutdown failed: %v", err)
 	}
 
 	fmt.Println("Server gracefully stopped.")
