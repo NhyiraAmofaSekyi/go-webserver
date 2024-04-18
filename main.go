@@ -20,7 +20,7 @@ func main() {
 
 	log.Println("server running on port 8080")
 	v1 := v1.NewRouter()
-	router.Handle("GET /v1/", http.StripPrefix("/v1", v1))
+	router.Handle("/v1/", http.StripPrefix("/v1", v1))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
