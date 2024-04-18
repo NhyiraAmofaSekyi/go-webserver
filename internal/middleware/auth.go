@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -29,7 +29,7 @@ func ParseJWT(tokenString string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		log.Fatalf("Error parsing token: %v", err)
+		// log.Fatalf("Error parsing token: %v", err)
 		return nil, fmt.Errorf("error parsing token: %v", err)
 	}
 
@@ -45,21 +45,6 @@ func ParseJWT(tokenString string) (jwt.MapClaims, error) {
 		return nil, fmt.Errorf("invalid token or failed claims assertion")
 	}
 }
-
-// func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		authHeader := r.Header.Get("Authorization")
-// 		if authHeader != "auth" {
-// 			// Use the RespondWithError utility to send an unauthorized response
-// 			utils.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
-// 			return
-// 		}
-// 		// ParseJWT()
-// 		ctx := context.WithValue(r.Context(), AuthUserID, authHeader)
-// 		req := r.WithContext(ctx)
-// 		next.ServeHTTP(w, req)
-// 	}
-// }
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -82,11 +67,19 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Retrieve the name claim from the token
 		name, ok := claims["name"].(string)
 		if !ok {
 			http.Error(w, "Unauthorized - Name claim missing", http.StatusUnauthorized)
 			return
+		}
+
+		// Retrieve the name claim from the token
+		if exp, ok := claims["exp"].(float64); ok {
+			currentTime := time.Now().Unix()
+			if int64(exp) < currentTime {
+				http.Error(w, "Forbidden - Token expired", http.StatusForbidden)
+				return
+			}
 		}
 
 		// Add the name to the request context
