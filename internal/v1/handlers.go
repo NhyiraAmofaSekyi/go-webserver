@@ -1,8 +1,10 @@
 package v1
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 )
 
@@ -13,6 +15,7 @@ func healthzHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func secureHandler(w http.ResponseWriter, r *http.Request) {
-
-	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "secure"})
+	userID := r.Context().Value(middleware.AuthUserID).(string)
+	log.Println("user logged in: ", userID)
+	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "secure", "userID": userID})
 }

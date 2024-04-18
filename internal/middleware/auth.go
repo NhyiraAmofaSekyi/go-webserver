@@ -1,10 +1,15 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/utils"
 )
+
+type AuthUserIDKey string
+
+const AuthUserID AuthUserIDKey = "middleware.auth.userID"
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +19,9 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			utils.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
-		next.ServeHTTP(w, r)
+
+		ctx := context.WithValue(r.Context(), AuthUserID, authHeader)
+		req := r.WithContext(ctx)
+		next.ServeHTTP(w, req)
 	}
 }
