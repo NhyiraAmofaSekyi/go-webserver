@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/NhyiraAmofaSekyi/go-webserver/utils"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -63,13 +64,13 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Parse the JWT and validate it
 		claims, err := ParseJWT(tokenString)
 		if err != nil {
-			http.Error(w, "Unauthorized - Invalid token", http.StatusUnauthorized)
+			utils.RespondWithJSON(w, 403, map[string]string{"message": "unauthorised"})
 			return
 		}
 
 		name, ok := claims["name"].(string)
 		if !ok {
-			http.Error(w, "Unauthorized - Name claim missing", http.StatusUnauthorized)
+			utils.RespondWithJSON(w, 400, map[string]string{"message": "bad request"})
 			return
 		}
 
@@ -77,7 +78,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		if exp, ok := claims["exp"].(float64); ok {
 			currentTime := time.Now().Unix()
 			if int64(exp) < currentTime {
-				http.Error(w, "Forbidden - Token expired", http.StatusForbidden)
+				utils.RespondWithJSON(w, 403, map[string]string{"message": "forbidden"})
 				return
 			}
 		}
