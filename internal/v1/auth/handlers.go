@@ -14,7 +14,7 @@ var hmacSampleSecret = []byte("sample")
 
 // Function to generate a new JWT for a given name
 func generateJWT(name string) (string, error) {
-	expirationTime := time.Now().Add(1 * time.Second).Unix()
+	expirationTime := time.Now().Add(1 * time.Hour).Unix()
 	// Create a new token object, specifying signing method and the claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"name": name, // Include the name in the token
