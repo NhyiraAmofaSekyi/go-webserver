@@ -1,7 +1,3 @@
-Creating a comprehensive README for your Go web server is crucial for both your development team and any potential contributors. The README should include sections that describe the project, how to set it up, how to run it, and how to test it. Below is a template for your README that you can adapt as necessary.
-
----
-
 # Go Web Server
 
 ## Overview
