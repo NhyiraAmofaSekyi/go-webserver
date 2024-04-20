@@ -6,6 +6,11 @@ COPY . .
 RUN go get -d -v ./...
 RUN go build -o /go/bin/app .
 
+# Run tests
+RUN CGO_ENABLED=0 go test -v ./... > test_output.txt && cat test_output.txt
+
+# Build the application.
+RUN CGO_ENABLED=0 go build -o /go/bin/app .
 
 #final stage
 FROM alpine:latest

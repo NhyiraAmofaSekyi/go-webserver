@@ -13,8 +13,8 @@ func NewRouter() *http.ServeMux {
 	v1Router := http.NewServeMux()
 	authRouter := auth.NewRouter()
 
-	v1Router.HandleFunc("GET /healthz", healthzHandler) // Note the path is just "/healthz" now
-	v1Router.HandleFunc("GET /secure", middleware.AuthMiddleware(secureHandler))
+	v1Router.HandleFunc("GET /healthz", HealthzHandler) // Note the path is just "/healthz" now
+	v1Router.HandleFunc("GET /secure", middleware.AuthMiddleware(SecureHandler))
 	v1Router.Handle("/", http.StripPrefix("/auth", authRouter))
 
 	return v1Router

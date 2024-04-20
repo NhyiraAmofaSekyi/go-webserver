@@ -31,7 +31,24 @@ func generateJWT(name string) (string, error) {
 	return tokenString, nil
 }
 
-func signIn(w http.ResponseWriter, r *http.Request) {
+func GenerateTestToken(name string, valid bool) string {
+	var expirationTime int64
+	if valid {
+		expirationTime = time.Now().Add(1 * time.Hour).Unix() // valid for 1 hour
+	} else {
+		expirationTime = time.Now().Add(-1 * time.Hour).Unix() // expired 1 hour ago
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"name": name,
+		"exp":  expirationTime,
+	})
+
+	tokenString, _ := token.SignedString(hmacSampleSecret)
+	return tokenString
+}
+
+func SignIn(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
@@ -53,7 +70,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "auth sign in", "token": jwtToken})
 }
 
-func signOut(w http.ResponseWriter, r *http.Request) {
+func SignOut(w http.ResponseWriter, r *http.Request) {
 
 	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "auth sign out"})
 }

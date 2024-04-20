@@ -8,8 +8,8 @@ import (
 func NewRouter() *http.ServeMux {
 	authRouter := http.NewServeMux()
 
-	authRouter.HandleFunc("POST /signIn", signIn) // Note the path is just "/healthz" now
-	authRouter.HandleFunc("GET /SignOut", signOut)
+	authRouter.HandleFunc("POST /signIn", SignIn) // Note the path is just "/healthz" now
+	authRouter.HandleFunc("GET /SignOut", SignOut)
 
 	return authRouter
 }
