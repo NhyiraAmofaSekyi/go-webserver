@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+	start := time.Now()
 
 	router := http.NewServeMux()
 
@@ -48,17 +49,35 @@ func main() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Printf("Error starting server: %v\n", err)
 		}
+		// Notify that the server has stopped after ListenAndServe returns.
+
+	}()
+	go func() {
+		for {
+			resp, err := http.Get("http://localhost:8080/v1/healthz")
+			if err == nil && resp.StatusCode == http.StatusOK {
+				log.Println("Server is ready.")
+				elapsed := time.Since(start)
+				log.Printf("Server ready in %s", elapsed)
+				resp.Body.Close()
+				break
+			}
+			if resp != nil {
+				resp.Body.Close()
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
 	}()
 
 	// Block until a signal is received.
 	<-quit
 	fmt.Println("Shutting down server...")
 
-	// Create a context with a timeout for the shutdown process.
+	// context with a timeout for the shutdown process.
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Attempt to gracefully shut down the server.
+	//gracefully shut down the server.
 	if err := server.Shutdown(ctx); err != nil {
 		fmt.Printf("server shutdown failed: %v", err)
 	}
