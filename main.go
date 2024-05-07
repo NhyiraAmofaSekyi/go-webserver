@@ -10,11 +10,17 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	middleware "github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
 	v1 "github.com/NhyiraAmofaSekyi/go-webserver/internal/v1"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	start := time.Now()
 
 	router := http.NewServeMux()

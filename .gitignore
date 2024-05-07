@@ -2,3 +2,4 @@
 .DS_Store
 go-webserver
 .gitignore
+.env
