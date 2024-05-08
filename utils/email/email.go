@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func SendMail() error {
+func SendMail(subject string, body string) error {
 	password := os.Getenv("SMTP_PASSWORD")
 	start := time.Now()
 	auth := smtp.PlainAuth(
@@ -19,7 +19,7 @@ func SendMail() error {
 		"smtp.gmail.com",
 	)
 
-	msg := "Subject: My special subject\nbody"
+	msg := "Subject: " + subject + "\n" + body
 	err := smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
@@ -34,11 +34,11 @@ func SendMail() error {
 	fmt.Printf("SendMail done in %s\n", time.Since(start))
 	return nil
 }
-func SendHTML(subject string) error {
+func SendHTML(subject string, name string) error {
 	password := os.Getenv("SMTP_PASSWORD")
 	start := time.Now()
 
-	templatePath := "./email.html"
+	templatePath := "./utils/email/email.html"
 
 	var body bytes.Buffer
 	t, err := template.ParseFiles(templatePath)
@@ -46,7 +46,7 @@ func SendHTML(subject string) error {
 		return fmt.Errorf("failed to parse template: %w", err)
 	}
 
-	if err := t.Execute(&body, struct{ Name string }{Name: "robby"}); err != nil {
+	if err := t.Execute(&body, struct{ Name string }{Name: name}); err != nil {
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
