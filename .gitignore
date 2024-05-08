@@ -3,3 +3,4 @@
 go-webserver
 .gitignore
 .env
+./vendor
