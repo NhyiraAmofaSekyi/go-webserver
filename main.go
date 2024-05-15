@@ -21,13 +21,17 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	port := os.Getenv("PORT")
+	host := os.Getenv("HOST")
+
 	start := time.Now()
 
 	router := http.NewServeMux()
 
-	log.Println("server running on port 8080")
+	log.Println("server running on port:", port)
 	v1 := v1.NewRouter()
-	router.Handle("/v1/", http.StripPrefix("/v1", v1))
+	api := "/api/v1/"
+	router.Handle(api, http.StripPrefix("/api/v1", v1))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
@@ -36,7 +40,7 @@ func main() {
 
 	server := &http.Server{
 		Handler: stack(router), // wrapped handler
-		Addr:    ":8080",       // Listen address
+		Addr:    ":" + port,    // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -58,9 +62,10 @@ func main() {
 		// Notify that the server has stopped after ListenAndServe returns.
 
 	}()
+	healthEndpoint := "http://" + host + ":" + port + api + "healthz"
 	go func() {
 		for {
-			resp, err := http.Get("http://localhost:8080/v1/healthz")
+			resp, err := http.Get(healthEndpoint)
 			if err == nil && resp.StatusCode == http.StatusOK {
 				log.Println("Server is ready.")
 				elapsed := time.Since(start)
