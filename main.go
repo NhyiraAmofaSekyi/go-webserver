@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -31,7 +32,7 @@ func main() {
 	log.Println("server running on port:", port)
 	v1 := v1.NewRouter()
 	api := "/api/v1/"
-	router.Handle(api, http.StripPrefix("/api/v1", v1))
+	router.Handle(api, http.StripPrefix(strings.TrimRight(api, "/"), v1))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,

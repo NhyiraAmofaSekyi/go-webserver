@@ -12,6 +12,7 @@ import (
 func MailHandler(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name    string `json:"name"`
+		Email   string `json:"email"`
 		Subject string `json:"subject"`
 	}
 
@@ -19,13 +20,13 @@ func MailHandler(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
 		return
 	}
 
-	err = email.SendMail(params.Subject, params.Name)
+	err = email.SendMail(params.Subject, params.Email, params.Name)
 	if err != nil {
-		http.Error(w, "Failed to send mail", http.StatusInternalServerError)
+		utils.RespondWithJSON(w, 400, map[string]string{"message": "failed to send email"})
 		return
 	}
 	fmt.Fprintln(w, "Mail sent successfully")
@@ -35,6 +36,7 @@ func HtmlMailHandler(w http.ResponseWriter, r *http.Request) {
 
 	type parameters struct {
 		Name    string `json:"name"`
+		Email   string `json:"email"`
 		Subject string `json:"subject"`
 	}
 
@@ -42,13 +44,13 @@ func HtmlMailHandler(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
 		return
 	}
 
-	err = email.SendHTML(params.Subject, params.Name)
+	err = email.SendHTML(params.Subject, params.Email, params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, fmt.Sprintf("Failed to send HTML mail %v", err))
+		utils.RespondWithJSON(w, 400, map[string]string{"message": "failed to send email"})
 		return
 	}
 	fmt.Fprintln(w, "HTML mail sent successfully")

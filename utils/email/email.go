@@ -1,4 +1,4 @@
-package utils
+package email
 
 import (
 	"bytes"
@@ -9,12 +9,13 @@ import (
 	"time"
 )
 
-func SendMail(subject string, body string) error {
+func SendMail(subject string, email string, body string) error {
 	password := os.Getenv("SMTP_PASSWORD")
+	emailAcc := os.Getenv("EMAILACC")
 	start := time.Now()
 	auth := smtp.PlainAuth(
 		"",
-		"nhyiraamofasekyi@gmail.com",
+		emailAcc,
 		password,
 		"smtp.gmail.com",
 	)
@@ -23,8 +24,8 @@ func SendMail(subject string, body string) error {
 	err := smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
-		"nhyiraamofasekyi@gmail.com",
-		[]string{"nhyiraamofasekyi@gmail.com"},
+		emailAcc,
+		[]string{email},
 		[]byte(msg),
 	)
 	if err != nil {
@@ -34,8 +35,9 @@ func SendMail(subject string, body string) error {
 	fmt.Printf("SendMail done in %s\n", time.Since(start))
 	return nil
 }
-func SendHTML(subject string, name string) error {
+func SendHTML(subject string, email string, name string) error {
 	password := os.Getenv("SMTP_PASSWORD")
+	emailAcc := os.Getenv("EMAILACC")
 	start := time.Now()
 
 	templatePath := "./utils/email/email.html"
@@ -52,7 +54,7 @@ func SendHTML(subject string, name string) error {
 
 	auth := smtp.PlainAuth(
 		"",
-		"nhyiraamofasekyi@gmail.com",
+		emailAcc,
 		password, // Make sure to use an application-specific password here
 		"smtp.gmail.com",
 	)
@@ -62,8 +64,8 @@ func SendHTML(subject string, name string) error {
 	err = smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
-		"nhyiraamofasekyi@gmail.com",
-		[]string{"nhyiraamofasekyi@gmail.com"},
+		emailAcc,
+		[]string{email},
 		[]byte(msg),
 	)
 	if err != nil {
