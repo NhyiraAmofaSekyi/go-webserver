@@ -3,4 +3,5 @@
 go-webserver
 .gitignore
 .env
-./vendor
+vendor/
+.aws/
