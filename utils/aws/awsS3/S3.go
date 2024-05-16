@@ -54,6 +54,7 @@ func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
 		Key:          aws.String(name),            // Specify the object key
 		RequestPayer: types.RequestPayerRequester, // Set who pays for the request
 	})
+
 	if err != nil {
 		// If there is an error, return nil for the object and the error
 		return nil, err
