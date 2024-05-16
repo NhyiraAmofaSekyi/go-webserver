@@ -7,9 +7,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-func ListBucketOBJ() {
+func ListBucketOBJ() error {
 	// Load the Shared AWS Configuration (~/.aws/config)
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
@@ -24,11 +25,40 @@ func ListBucketOBJ() {
 		Bucket: aws.String("my-bucket"),
 	})
 	if err != nil {
+
 		log.Fatal(err)
+		return err
 	}
 
 	log.Println("first page results:")
 	for _, object := range output.Contents {
 		log.Printf("key=%s size=%d", aws.ToString(object.Key), object.Size)
 	}
+	return nil
+}
+
+func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
+	// Load the AWS default configuration
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		// Return nil for the object and the error
+		return nil, err
+	}
+
+	// Create an S3 client from the configuration
+	client := s3.NewFromConfig(cfg)
+
+	// Attempt to get the object from the S3 bucket
+	resp, err := client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket:       aws.String(bucket),          // Specify the bucket name
+		Key:          aws.String(name),            // Specify the object key
+		RequestPayer: types.RequestPayerRequester, // Set who pays for the request
+	})
+	if err != nil {
+		// If there is an error, return nil for the object and the error
+		return nil, err
+	}
+
+	// If no error, return the response object and nil for the error
+	return resp, nil
 }
