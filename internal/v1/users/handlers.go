@@ -11,6 +11,7 @@ import (
 	"text/template"
 
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
+	aws "github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3"
 	email "github.com/NhyiraAmofaSekyi/go-webserver/utils/email"
 )
 
@@ -116,4 +117,15 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.RespondWithJSON(w, 200, response)
+}
+
+func listObj(w http.ResponseWriter, r *http.Request) {
+
+	err := aws.ListBucketOBJ()
+
+	if err != nil {
+		utils.RespondWithError(w, 500, err.Error())
+		return
+	}
+	utils.RespondWithJSON(w, 200, map[string]string{"message": "success"})
 }

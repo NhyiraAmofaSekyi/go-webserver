@@ -12,7 +12,7 @@ import (
 
 func ListBucketOBJ() error {
 	// Load the Shared AWS Configuration (~/.aws/config)
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,8 +22,9 @@ func ListBucketOBJ() error {
 
 	// Get the first page of results for ListObjectsV2 for a bucket
 	output, err := client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
-		Bucket: aws.String("my-bucket"),
+		Bucket: aws.String("arn:aws:s3:eu-north-1:049991758581:accesspoint/test2"),
 	})
+
 	if err != nil {
 
 		log.Fatal(err)
