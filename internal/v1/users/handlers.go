@@ -13,6 +13,7 @@ import (
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 	aws "github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3"
 	email "github.com/NhyiraAmofaSekyi/go-webserver/utils/email"
+	uuid "github.com/google/uuid"
 )
 
 func MailHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,16 +111,28 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 
 	fileType := strings.ToLower(filepath.Ext(handler.Filename))
 
+	id := uuid.New()
+
+	bucket := os.Getenv("AWS_BUCKET")
+	region := os.Getenv("AWS_BUCKET_REGION")
+
+	err = aws.UploadFile(bucket, id.String(), file)
+	if err != nil {
+		utils.RespondWithError(w, 500, "Error uploading")
+		return
+	}
+
+	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + id.String()
 	response := map[string]interface{}{
 		"fileName": handler.Filename,
 		"fileType": fileType,
 		"fileSize": fileSize,
+		"url":      url,
 	}
-
 	utils.RespondWithJSON(w, 200, response)
 }
 
-func listObj(w http.ResponseWriter, r *http.Request) {
+func ListObj(w http.ResponseWriter, r *http.Request) {
 
 	err := aws.ListBucketOBJ()
 
@@ -128,4 +141,18 @@ func listObj(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.RespondWithJSON(w, 200, map[string]string{"message": "success"})
+}
+
+func GetObj(w http.ResponseWriter, r *http.Request) {
+
+	_, err := aws.GetObject("168e1cea-707a-45bb-92ed-d30800c0c85d", "arn:aws:s3:eu-north-1:049991758581:accesspoint/test2")
+	bucket := os.Getenv("AWS_BUCKET")
+	region := os.Getenv("AWS_BUCKET_REDION")
+	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + "168e1cea-707a-45bb-92ed-d30800c0c85d"
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, 200, url)
 }

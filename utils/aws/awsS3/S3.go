@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"log"
+	"mime/multipart"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -39,11 +40,10 @@ func ListBucketOBJ() error {
 }
 
 func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
-	// Load the AWS default configuration
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
 	if err != nil {
-		// Return nil for the object and the error
-		return nil, err
+		log.Fatal(err)
 	}
 
 	// Create an S3 client from the configuration
@@ -63,4 +63,31 @@ func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
 
 	// If no error, return the response object and nil for the error
 	return resp, nil
+}
+
+func UploadFile(bucketName string, objectKey string, file multipart.File) error {
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create an S3 client from the configuration
+	client := s3.NewFromConfig(cfg)
+
+	if err != nil {
+		log.Printf("Couldn' upload. Here's why: %v\n", err)
+	} else {
+
+		_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(objectKey),
+			Body:   file,
+		})
+		if err != nil {
+			log.Printf("Couldn't upload file to %v:%v. Here's why: %v\n",
+				bucketName, objectKey, err)
+		}
+	}
+	return err
 }
