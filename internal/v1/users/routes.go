@@ -12,6 +12,8 @@ func NewRouter() *http.ServeMux {
 	userRouter.HandleFunc("POST /sendHTML", HtmlMailHandler)
 	userRouter.HandleFunc("/fileForm", FileForm)
 	userRouter.HandleFunc("/upload", Upload)
+	userRouter.HandleFunc("/listObj", ListObj)
+	userRouter.HandleFunc("/getObj", GetObj)
 
 	return userRouter
 }
