@@ -2,8 +2,9 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"mime/multipart"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -46,6 +47,13 @@ func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
 		log.Fatal(err)
 	}
 
+	if name == "" {
+		return nil, fmt.Errorf("object name cannot be empty")
+	}
+	if bucket == "" {
+		return nil, fmt.Errorf("bucket name cannot be empty")
+	}
+
 	// Create an S3 client from the configuration
 	client := s3.NewFromConfig(cfg)
 
@@ -65,7 +73,20 @@ func GetObject(name string, bucket string) (*s3.GetObjectOutput, error) {
 	return resp, nil
 }
 
-func UploadFile(bucketName string, objectKey string, file multipart.File) error {
+func UploadFile(bucketName string, objectKey string, fileName string, contentType string) error {
+
+	if bucketName == "" {
+		return fmt.Errorf("bucket name cannot be empty")
+	}
+	if objectKey == "" {
+		return fmt.Errorf("object key cannot be empty")
+	}
+	if fileName == "" {
+		return fmt.Errorf("file name cannot be empty")
+	}
+	if contentType == "" {
+		return fmt.Errorf("content type cannot be empty")
+	}
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
 	if err != nil {
@@ -75,14 +96,17 @@ func UploadFile(bucketName string, objectKey string, file multipart.File) error 
 	// Create an S3 client from the configuration
 	client := s3.NewFromConfig(cfg)
 
+	file, err := os.Open(fileName)
 	if err != nil {
-		log.Printf("Couldn' upload. Here's why: %v\n", err)
+		log.Printf("Couldn't open file %v to upload. Here's why: %v\n", fileName, err)
 	} else {
-
+		defer file.Close()
+		println(contentType)
 		_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
-			Bucket: aws.String(bucketName),
-			Key:    aws.String(objectKey),
-			Body:   file,
+			Bucket:      aws.String(bucketName),
+			Key:         aws.String(objectKey),
+			Body:        file,
+			ContentType: aws.String(contentType),
 		})
 		if err != nil {
 			log.Printf("Couldn't upload file to %v:%v. Here's why: %v\n",

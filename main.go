@@ -44,7 +44,7 @@ func main() {
 		Addr:    ":" + port,    // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
-		WriteTimeout:      10 * time.Second,
+		WriteTimeout:      15 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
 		MaxHeaderBytes:    1 << 20,

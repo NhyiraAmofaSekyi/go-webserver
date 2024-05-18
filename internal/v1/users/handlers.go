@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -90,47 +91,6 @@ func FileForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-func Upload(w http.ResponseWriter, r *http.Request) {
-
-	r.ParseMultipartForm(10 << 20) // 10MB
-
-	file, handler, err := r.FormFile("file")
-	if err != nil {
-		utils.RespondWithError(w, 500, "Error retrieving the file")
-		return
-	}
-	defer file.Close()
-
-	fileBytes, err := io.ReadAll(file)
-	if err != nil {
-		utils.RespondWithError(w, 500, "Error reading the file")
-		return
-	}
-
-	fileSize := len(fileBytes)
-
-	fileType := strings.ToLower(filepath.Ext(handler.Filename))
-
-	id := uuid.New()
-
-	bucket := os.Getenv("AWS_BUCKET")
-	region := os.Getenv("AWS_BUCKET_REGION")
-
-	err = aws.UploadFile(bucket, id.String(), file)
-	if err != nil {
-		utils.RespondWithError(w, 500, "Error uploading")
-		return
-	}
-
-	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + id.String()
-	response := map[string]interface{}{
-		"fileName": handler.Filename,
-		"fileType": fileType,
-		"fileSize": fileSize,
-		"url":      url,
-	}
-	utils.RespondWithJSON(w, 200, response)
-}
 
 func ListObj(w http.ResponseWriter, r *http.Request) {
 
@@ -144,15 +104,78 @@ func ListObj(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetObj(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Key string `json:"key"`
+	}
 
-	_, err := aws.GetObject("168e1cea-707a-45bb-92ed-d30800c0c85d", "arn:aws:s3:eu-north-1:049991758581:accesspoint/test2")
-	bucket := os.Getenv("AWS_BUCKET")
-	region := os.Getenv("AWS_BUCKET_REDION")
-	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + "168e1cea-707a-45bb-92ed-d30800c0c85d"
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
+		return
+	}
+
+	_, err = aws.GetObject(params.Key, "arn:aws:s3:eu-north-1:049991758581:accesspoint/test2")
+	bucket := os.Getenv("AWS_BUCKET")
+	region := os.Getenv("AWS_BUCKET_REGION")
+	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + params.Key
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, "not found")
 		return
 	}
 
 	utils.RespondWithJSON(w, 200, url)
+}
+
+func Upload(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseMultipartForm(10 << 20) // 10MB
+
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error retrieving the file")
+		return
+	}
+
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error reading the file")
+		return
+	}
+	openFile := handler.Filename
+
+	fileSize := len(fileBytes)
+
+	fileType := strings.ToLower(filepath.Ext(handler.Filename))
+	println("file type", fileType)
+
+	id := uuid.New()
+
+	bucket := os.Getenv("AWS_BUCKET")
+	region := os.Getenv("AWS_BUCKET_REGION")
+
+	contentType := mime.TypeByExtension(fileType)
+	println("content type", contentType)
+	if contentType == "" {
+		// Default to binary/octet-stream if MIME type can't be determined
+		contentType = "application/octet-stream"
+	}
+
+	key := id.String() + fileType
+
+	err = aws.UploadFile(bucket, key, openFile, contentType)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Error uploading")
+		return
+	}
+
+	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key
+	response := map[string]interface{}{
+		"fileName": handler.Filename,
+		"fileType": fileType,
+		"fileSize": fileSize,
+		"url":      url,
+	}
+	utils.RespondWithJSON(w, http.StatusOK, response)
 }
