@@ -57,20 +57,20 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, http.StatusInternalServerError, fmt.Sprintf("Error passing json: %v", err))
 		return
 	}
 
 	jwtToken, err := generateJWT(params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, http.StatusInternalServerError, fmt.Sprintf("Error passing json: %v", err))
 		return
 	}
 
-	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "auth sign in", "token": jwtToken})
+	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"status": "ok", "route": "auth sign in", "token": jwtToken})
 }
 
 func SignOut(w http.ResponseWriter, r *http.Request) {
 
-	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "auth sign out"})
+	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"status": "ok", "route": "auth sign out"})
 }

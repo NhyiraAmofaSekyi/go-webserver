@@ -28,13 +28,13 @@ func MailHandler(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
+		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "server error"})
 		return
 	}
 
 	err = email.SendMail(params.Subject, params.Email, params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, map[string]string{"message": "failed to send email"})
+		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "failed to send email"})
 		return
 	}
 	fmt.Fprintln(w, "Mail sent successfully")
@@ -52,13 +52,13 @@ func HtmlMailHandler(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
+		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "server error"})
 		return
 	}
 
 	err = email.SendHTML(params.Subject, params.Email, params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, 400, map[string]string{"message": "failed to send email"})
+		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "failed to send email"})
 		return
 	}
 	fmt.Fprintln(w, "HTML mail sent successfully")
@@ -97,10 +97,10 @@ func ListObj(w http.ResponseWriter, r *http.Request) {
 	err := aws.ListBucketOBJ()
 
 	if err != nil {
-		utils.RespondWithError(w, 500, err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	utils.RespondWithJSON(w, 200, map[string]string{"message": "success"})
+	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "success"})
 }
 
 func GetObj(w http.ResponseWriter, r *http.Request) {
@@ -112,7 +112,7 @@ func GetObj(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, 500, map[string]string{"message": "server error"})
+		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "server error"})
 		return
 	}
 
@@ -121,11 +121,11 @@ func GetObj(w http.ResponseWriter, r *http.Request) {
 	region := os.Getenv("AWS_BUCKET_REGION")
 	url := "https://" + bucket + ".s3." + region + ".amazonaws.com/" + params.Key
 	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, "not found")
+		utils.RespondWithError(w, http.StatusNotFound, "not found")
 		return
 	}
 
-	utils.RespondWithJSON(w, 200, url)
+	utils.RespondWithJSON(w, http.StatusOK, url)
 }
 
 func Upload(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +158,6 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	contentType := mime.TypeByExtension(fileType)
 	println("content type", contentType)
 	if contentType == "" {
-		// Default to binary/octet-stream if MIME type can't be determined
 		contentType = "application/octet-stream"
 	}
 
