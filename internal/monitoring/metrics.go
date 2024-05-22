@@ -13,3 +13,8 @@ var (
 		[]string{"service", "method", "endpoint"},
 	)
 )
+
+func init() {
+
+	prometheus.MustRegister(HttpRequestsTotal)
+}
