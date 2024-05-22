@@ -1,0 +1,29 @@
+?   	github.com/NhyiraAmofaSekyi/go-webserver	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/internal/monitoring	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/internal/v1/users	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/utils/email	[no test files]
+?   	github.com/NhyiraAmofaSekyi/go-webserver/utils	[no test files]
+=== RUN   TestHealthzHandler
+--- PASS: TestHealthzHandler (0.00s)
+=== RUN   TestSecureHandler
+=== RUN   TestSecureHandler/valid_token
+Token claims:
+exp: 1.716292059e+09
+name: testuser
+2024/05/21 12:47:39 user logged in:  testuser
+=== RUN   TestSecureHandler/invalid_token
+--- PASS: TestSecureHandler (0.00s)
+    --- PASS: TestSecureHandler/valid_token (0.00s)
+    --- PASS: TestSecureHandler/invalid_token (0.00s)
+PASS
+ok  	github.com/NhyiraAmofaSekyi/go-webserver/internal/v1	(cached)
+=== RUN   TestSignIn
+=== RUN   TestSignIn/valid_input
+=== RUN   TestSignIn/invalid_JSON
+--- PASS: TestSignIn (0.00s)
+    --- PASS: TestSignIn/valid_input (0.00s)
+    --- PASS: TestSignIn/invalid_JSON (0.00s)
+PASS
+ok  	github.com/NhyiraAmofaSekyi/go-webserver/internal/v1/auth	0.015s

@@ -12,18 +12,23 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	middleware "github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
 	v1 "github.com/NhyiraAmofaSekyi/go-webserver/internal/v1"
 )
 
 func main() {
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
 	port := os.Getenv("PORT")
 	host := os.Getenv("HOST")
+	log.Print("host:", host)
+	log.Print("port:", port)
 
 	start := time.Now()
 
@@ -33,10 +38,12 @@ func main() {
 	v1 := v1.NewRouter()
 	api := "/api/v1/"
 	router.Handle(api, http.StripPrefix(strings.TrimRight(api, "/"), v1))
+	router.Handle("/metrics", promhttp.Handler())
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
 		middleware.CorsWrapper,
+		middleware.Monitoring,
 	)
 
 	server := &http.Server{
@@ -60,12 +67,12 @@ func main() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Printf("Error starting server: %v\n", err)
 		}
-		// Notify that the server has stopped after ListenAndServe returns.
-
 	}()
 	healthEndpoint := "http://" + host + ":" + port + api + "healthz"
+	fmt.Println(healthEndpoint)
 	go func() {
 		for {
+
 			resp, err := http.Get(healthEndpoint)
 			if err == nil && resp.StatusCode == http.StatusOK {
 				log.Println("Server is ready.")

@@ -5,3 +5,6 @@ go-webserver
 .env
 vendor/
 .aws/
+prometheus.yaml
+docker-compose.yaml
+

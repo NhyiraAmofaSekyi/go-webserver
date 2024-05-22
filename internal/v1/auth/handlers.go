@@ -57,13 +57,13 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, http.StatusInternalServerError, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, http.StatusBadRequest, fmt.Sprintf("Error passing json: %v", err))
 		return
 	}
 
 	jwtToken, err := generateJWT(params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, http.StatusInternalServerError, fmt.Sprintf("Error passing json: %v", err))
+		utils.RespondWithJSON(w, http.StatusBadRequest, fmt.Sprintf("Error passing json: %v", err))
 		return
 	}
 
