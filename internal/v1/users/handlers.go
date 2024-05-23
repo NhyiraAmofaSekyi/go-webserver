@@ -52,13 +52,13 @@ func HtmlMailHandler(w http.ResponseWriter, r *http.Request) {
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "server error"})
+		utils.RespondWithError(w, http.StatusInternalServerError, "error parsing json")
 		return
 	}
 
 	err = email.SendHTML(params.Subject, params.Email, params.Name)
 	if err != nil {
-		utils.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"message": "failed to send email"})
+		utils.RespondWithError(w, http.StatusInternalServerError, "error sending email")
 		return
 	}
 	fmt.Fprintln(w, "HTML mail sent successfully")

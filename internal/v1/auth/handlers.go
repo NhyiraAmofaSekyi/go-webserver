@@ -53,6 +53,9 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		Name string `json:"name"`
 	}
 
+	// ctx := context.WithValue(r.Context(), middleware.Skey, "auth")
+	// req := r.WithContext(ctx)
+
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
 	err := decoder.Decode(&params)

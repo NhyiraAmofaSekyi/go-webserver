@@ -14,6 +14,9 @@ import (
 var hmacSampleSecret = []byte("sample")
 
 type AuthUserIDKey string
+type ServiceKey string
+
+const Skey ServiceKey = "service"
 
 const AuthUserID AuthUserIDKey = "middleware.auth.userID"
 

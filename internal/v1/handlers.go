@@ -11,11 +11,11 @@ import (
 // Handler function for the "healthz" endpoint
 func HealthzHandler(w http.ResponseWriter, r *http.Request) {
 
-	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "v1"})
+	utils.RespondWithJSONContext(r.Context(), w, 200, map[string]string{"status": "ok", "route": "v1"})
 }
 
 func SecureHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.AuthUserID).(string)
 	log.Println("user logged in: ", userID)
-	utils.RespondWithJSON(w, 200, map[string]string{"status": "ok", "route": "secure", "userID": userID})
+	utils.RespondWithJSONContext(r.Context(), w, 200, map[string]string{"status": "ok", "route": "secure", "userID": userID})
 }
