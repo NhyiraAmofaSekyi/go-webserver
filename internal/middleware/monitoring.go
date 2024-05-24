@@ -21,7 +21,7 @@ func Monitoring(next http.Handler) http.Handler {
 			monitoring.HttpRequestErrorsTotal.WithLabelValues("api", r.Method, r.URL.Path, http.StatusText(wrapped.statusCode)).Inc()
 		}
 		monitoring.HttpRequestsTotal.WithLabelValues("api", r.Method, r.URL.Path).Inc()
-		monitoring.HttpRequestDuration.WithLabelValues("api", r.Method, r.URL.Path).Observe(float64(time.Since(start)))
+		monitoring.HttpRequestDuration.WithLabelValues("api", r.Method, r.URL.Path).Observe(time.Since(start).Seconds())
 
 	})
 }
