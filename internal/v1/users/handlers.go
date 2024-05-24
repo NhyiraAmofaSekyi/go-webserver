@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	database "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 	aws "github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3"
 	email "github.com/NhyiraAmofaSekyi/go-webserver/utils/email"
@@ -177,4 +178,29 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 		"url":      url,
 	}
 	utils.RespondWithJSON(w, http.StatusOK, response)
+}
+
+func CreateUser(dbConfig *database.DBConfig) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type parameters struct {
+			Name string `json:"name"`
+		}
+
+		decoder := json.NewDecoder(r.Body)
+		params := parameters{}
+
+		err := decoder.Decode(&params)
+		if err != nil {
+			utils.RespondWithJSON(w, http.StatusBadRequest, map[string]string{"message": "bad request"})
+			return
+		}
+
+		user, err := dbConfig.DB.CreateUser(r.Context(), params.Name)
+		if err != nil {
+			utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.RespondWithJSON(w, http.StatusOK, user)
+	}
 }

@@ -2,10 +2,11 @@ package users
 
 import (
 	"net/http"
+
+	databaseCfg "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 )
 
-// NewRouter returns a new http.ServeMux with v1 routes configured
-func NewRouter() *http.ServeMux {
+func NewRouter(dbCFG *databaseCfg.DBConfig) *http.ServeMux {
 	userRouter := http.NewServeMux()
 
 	userRouter.HandleFunc("POST /sendMail", MailHandler)
@@ -14,6 +15,7 @@ func NewRouter() *http.ServeMux {
 	userRouter.HandleFunc("/upload", Upload)
 	userRouter.HandleFunc("/listObj", ListObj)
 	userRouter.HandleFunc("/getObj", GetObj)
+	userRouter.HandleFunc("/createUser", CreateUser(dbCFG))
 
 	return userRouter
 }

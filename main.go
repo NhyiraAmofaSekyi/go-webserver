@@ -11,7 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	databaseCfg "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	middleware "github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
@@ -27,15 +29,19 @@ func main() {
 
 	port := os.Getenv("PORT")
 	host := os.Getenv("HOST")
-	log.Print("host:", host)
-	log.Print("port:", port)
 
 	start := time.Now()
 
 	router := http.NewServeMux()
 
 	log.Println("server running on port:", port)
-	v1 := v1.NewRouter()
+
+	dbCFG, err := databaseCfg.NewDBConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	v1 := v1.NewRouter(dbCFG)
 	api := "/api/v1/"
 	router.Handle(api, http.StripPrefix(strings.TrimRight(api, "/"), v1))
 	router.Handle("/metrics", promhttp.Handler())
