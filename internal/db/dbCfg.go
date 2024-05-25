@@ -30,6 +30,7 @@ func NewDBConfig() (*DBConfig, error) {
 	}
 
 	db := database.New(conn)
+
 	dbConfig := &DBConfig{
 		DB: db,
 	}

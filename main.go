@@ -53,8 +53,8 @@ func main() {
 	)
 
 	server := &http.Server{
-		Handler: stack(router), // wrapped handler
-		Addr:    ":" + port,    // Listen address
+		Handler: stack(router),
+		Addr:    ":" + port, // Listen address
 		// Other configurations like ReadTimeout, WriteTimeout, etc.
 		ReadTimeout:       5 * time.Second,
 		WriteTimeout:      15 * time.Second,
