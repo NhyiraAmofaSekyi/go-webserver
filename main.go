@@ -27,23 +27,23 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
-	port := os.Getenv("PORT")
-	host := os.Getenv("HOST")
-
 	start := time.Now()
-
-	router := http.NewServeMux()
-
-	log.Println("server running on port:", port)
 
 	dbCFG, err := databaseCfg.NewDBConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("dbconnection error, %e", err)
 	}
-	config.Initialize(dbCFG)
 
-	v1 := v1.NewRouter(dbCFG)
+	config.Initialize(dbCFG)
+	host := os.Getenv("API_HOST")
+	port := os.Getenv("API_PORT")
+	log.Println("server running on port:", port)
+
+	// appConfig := config.AppConfig
+
+	router := http.NewServeMux()
+
+	v1 := v1.NewRouter()
 	api := "/api/v1/"
 	router.Handle(api, http.StripPrefix(strings.TrimRight(api, "/"), v1))
 	router.Handle("/metrics", promhttp.Handler())

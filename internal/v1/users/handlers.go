@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -12,7 +13,6 @@ import (
 	"text/template"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/config"
-	database "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 	aws "github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3"
 	email "github.com/NhyiraAmofaSekyi/go-webserver/utils/email"
@@ -181,29 +181,30 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, response)
 }
 
-func CreateUser(dbConfig *database.DBConfig) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		type parameters struct {
-			Name string `json:"name"`
-		}
-
-		decoder := json.NewDecoder(r.Body)
-		params := parameters{}
-
-		err := decoder.Decode(&params)
-		if err != nil {
-			utils.RespondWithJSON(w, http.StatusBadRequest, map[string]string{"message": "bad request"})
-			return
-		}
-
-		user, err := dbConfig.DB.CreateUser(r.Context(), params.Name)
-		if err != nil {
-			utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		utils.RespondWithJSON(w, http.StatusOK, user)
+func CreateUser(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Name string `json:"name"`
 	}
+	dbConfig := config.AppConfig.DBConfig
+
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+
+	err := decoder.Decode(&params)
+	if err != nil {
+		utils.RespondWithJSON(w, http.StatusBadRequest, map[string]string{"message": "bad request"})
+		return
+	}
+
+	user, err := dbConfig.DB.CreateUser(r.Context(), params.Name)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	log.Printf("dbconfig address %p ", *dbConfig.DB)
+
+	utils.RespondWithJSON(w, http.StatusOK, user)
+
 }
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -214,6 +215,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	log.Printf("dbconfig address %p ", *dbConfig.DB)
 
 	utils.RespondWithJSON(w, http.StatusOK, users)
 

@@ -27,6 +27,7 @@ func Initialize(dbConfig *databaseCfg.DBConfig) {
 			DBConfig: dbConfig,
 		}
 	})
+
 }
 
 // func NewAuth2() oauth2.Config {
