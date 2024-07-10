@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -201,7 +200,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	log.Printf("dbconfig address %p ", *dbConfig.DB)
 
 	utils.RespondWithJSON(w, http.StatusOK, user)
 
@@ -215,7 +213,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	log.Printf("dbconfig address %p ", *dbConfig.DB)
 
 	utils.RespondWithJSON(w, http.StatusOK, users)
 

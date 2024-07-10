@@ -8,3 +8,5 @@ vendor/
 prometheus.yaml
 docker-compose.yaml
 monitoring-test/
+.env*
+.env.development

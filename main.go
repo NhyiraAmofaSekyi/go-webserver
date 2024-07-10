@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,9 +24,20 @@ import (
 
 func main() {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	env := flag.String("env", "development", "Define the application environment (development or production)")
+	flag.Parse() // Parse the flags from the command line
+
+	log.Printf("Environment set to: %s", *env)
+
+	// Conditionally load the .env file only for the development environment
+	if *env == "development" {
+		log.Println("Starting in development mode, loading .env file...")
+		dotenvPath := ".env." + *env
+		if err := godotenv.Load(dotenvPath); err != nil {
+			log.Println("Error loading .env file, assuming default dev settings.")
+		}
+	} else {
+		log.Println("Starting in production mode, configuration must be set via environment variables.")
 	}
 	start := time.Now()
 
