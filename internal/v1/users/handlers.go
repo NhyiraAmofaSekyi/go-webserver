@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/config"
 	database "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 	utils "github.com/NhyiraAmofaSekyi/go-webserver/utils"
 	aws "github.com/NhyiraAmofaSekyi/go-webserver/utils/aws/awsS3"
@@ -203,4 +204,17 @@ func CreateUser(dbConfig *database.DBConfig) http.HandlerFunc {
 
 		utils.RespondWithJSON(w, http.StatusOK, user)
 	}
+}
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+
+	dbConfig := config.AppConfig.DBConfig
+
+	users, err := dbConfig.DB.GetUsers(r.Context())
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, users)
+
 }

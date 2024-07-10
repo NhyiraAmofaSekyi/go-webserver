@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/config"
 	databaseCfg "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -40,6 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	config.Initialize(dbCFG)
 
 	v1 := v1.NewRouter(dbCFG)
 	api := "/api/v1/"

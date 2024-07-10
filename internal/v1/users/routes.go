@@ -16,6 +16,7 @@ func NewRouter(dbCFG *databaseCfg.DBConfig) *http.ServeMux {
 	userRouter.HandleFunc("/listObj", ListObj)
 	userRouter.HandleFunc("/getObj", GetObj)
 	userRouter.HandleFunc("/createUser", CreateUser(dbCFG))
+	userRouter.HandleFunc("/getUsers", GetUsers)
 
 	return userRouter
 }
