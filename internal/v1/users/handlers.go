@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 	"os"
@@ -135,16 +136,18 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 
 	file, handler, err := r.FormFile("file")
 	if err != nil {
+		log.Printf(" retrieving err: %v", err)
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error retrieving the file")
 		return
 	}
 
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
+		log.Printf(" reading error %v", err)
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error reading the file")
 		return
 	}
-	openFile := handler.Filename
+	// openFile := handler.Filename
 
 	fileSize := len(fileBytes)
 
@@ -164,8 +167,9 @@ func Upload(w http.ResponseWriter, r *http.Request) {
 
 	key := id.String() + fileType
 
-	err = aws.UploadFile(bucket, key, openFile, contentType)
+	err = aws.Upload(bucket, key, file, contentType)
 	if err != nil {
+		log.Printf(" upload error %v", err)
 		utils.RespondWithError(w, http.StatusInternalServerError, "Error uploading")
 		return
 	}

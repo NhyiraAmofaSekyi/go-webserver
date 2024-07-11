@@ -3,7 +3,9 @@ package aws
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"mime/multipart"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -112,6 +114,43 @@ func UploadFile(bucketName string, objectKey string, fileName string, contentTyp
 			log.Printf("Couldn't upload file to %v:%v. Here's why: %v\n",
 				bucketName, objectKey, err)
 		}
+	}
+	return err
+}
+
+func Upload(bucketName string, objectKey string, file multipart.File, contentType string) error {
+
+	if bucketName == "" {
+		return fmt.Errorf("bucket name cannot be empty")
+	}
+	if objectKey == "" {
+		return fmt.Errorf("object key cannot be empty")
+	}
+	if contentType == "" {
+		return fmt.Errorf("content type cannot be empty")
+	}
+	_, err := file.Seek(0, io.SeekStart)
+	if err != nil {
+		return fmt.Errorf("failed to seek file: %w", err)
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-north-1"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create an S3 client from the configuration
+	client := s3.NewFromConfig(cfg)
+
+	_, err = client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket:      aws.String(bucketName),
+		Key:         aws.String(objectKey),
+		Body:        file,
+		ContentType: aws.String(contentType),
+	})
+	if err != nil {
+		log.Printf("Couldn't upload file to %v:%v. Here's why: %v\n",
+			bucketName, objectKey, err)
 	}
 	return err
 }
