@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
 )
 
 type wrappedWriter struct {
@@ -33,6 +34,14 @@ func Logging(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(wrapped, req)
-		log.Println(wrapped.statusCode, r.Method, r.URL.Path, time.Since(start))
+
+		duration := time.Since(start)
+		if wrapped.statusCode >= 500 {
+			logger.Error("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
+		} else if wrapped.statusCode >= 400 {
+			logger.Info("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
+		} else {
+			logger.Info("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
+		}
 	})
 }

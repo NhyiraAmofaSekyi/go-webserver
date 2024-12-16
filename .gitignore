@@ -2,7 +2,7 @@
 .DS_Store
 go-webserver
 .gitignore
-.env
+.env.*
 vendor/
 .aws/
 prometheus.yaml
@@ -10,3 +10,4 @@ docker-compose.yaml
 monitoring-test/
 .env*
 .env.development
+.DS_Store

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
 )
 
 type ReqTime string
@@ -15,7 +17,7 @@ const ReqStartTime ReqTime = "reqStartTime"
 func RespondWithError(w http.ResponseWriter, code int, msg string) {
 
 	if code > 499 {
-		log.Printf("Responding with 5XX error: %s", msg)
+		logger.Error("Responding with 5XX error: %s", msg)
 	}
 	type errResponse struct {
 		Error string `json:"error"`
@@ -30,7 +32,7 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 	data, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("Error marshalling JSON: %v", err)
+		logger.Error("Error marshalling JSON: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 

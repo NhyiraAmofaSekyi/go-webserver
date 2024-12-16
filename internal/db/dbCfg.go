@@ -3,23 +3,23 @@ package databaseCfg
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/db/database"
 	_ "github.com/lib/pq"
 )
 
 type DBConfig struct {
-	DB *database.Queries
+	DB   *database.Queries
+	Conn *sql.DB
 }
 
-func NewDBConfig() (*DBConfig, error) {
-	dbUrl := os.Getenv("DB_URL")
-	if dbUrl == "" {
-		return nil, fmt.Errorf("DB_URL not found in environment")
+func NewDBConfig(dbURL string) (*DBConfig, error) {
+
+	if dbURL == "" {
+		return nil, fmt.Errorf("DB_URL environment variable is not set")
 	}
 
-	conn, err := sql.Open("postgres", dbUrl)
+	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("can't connect to the database: %v", err)
 	}
@@ -32,9 +32,9 @@ func NewDBConfig() (*DBConfig, error) {
 	db := database.New(conn)
 
 	dbConfig := &DBConfig{
-		DB: db,
+		DB:   db,
+		Conn: conn,
 	}
-	fmt.Printf("DBCfg.DB: %v\n", dbConfig.DB)
 
 	return dbConfig, nil
 }

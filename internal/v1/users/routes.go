@@ -14,7 +14,6 @@ func NewRouter() *http.ServeMux {
 	userRouter.HandleFunc("/listObj", ListObj)
 	userRouter.HandleFunc("/getObj", GetObj)
 	userRouter.HandleFunc("/createUser", CreateUser)
-	userRouter.HandleFunc("/getUsers", GetUsers)
 
 	return userRouter
 }

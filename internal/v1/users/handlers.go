@@ -188,7 +188,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
-	dbConfig := config.AppConfig.DBConfig
 
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
@@ -199,25 +198,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := dbConfig.DB.CreateUser(r.Context(), params.Name)
+	user, err := config.Config.DBConfig.DB.CreateUser(r.Context(), params.Name)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	utils.RespondWithJSON(w, http.StatusOK, user)
-
-}
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-
-	dbConfig := config.AppConfig.DBConfig
-
-	users, err := dbConfig.DB.GetUsers(r.Context())
-	if err != nil {
-		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	utils.RespondWithJSON(w, http.StatusOK, users)
-
 }

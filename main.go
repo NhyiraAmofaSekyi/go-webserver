@@ -2,19 +2,16 @@ package main
 
 import (
 	"context"
-	"flag"
-	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/config"
-	databaseCfg "github.com/NhyiraAmofaSekyi/go-webserver/internal/db"
-	"github.com/joho/godotenv"
+	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
 	_ "github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -24,41 +21,21 @@ import (
 
 func main() {
 
-	env := flag.String("env", "development", "Define the application environment (development or production)")
-	flag.Parse() // Parse the flags from the command line
-
-	log.Printf("Environment set to: %s", *env)
-
-	// Conditionally load the .env file only for the development environment
-	if *env == "development" {
-		log.Println("Starting in development mode, loading .env file...")
-		dotenvPath := ".env." + *env
-		if err := godotenv.Load(dotenvPath); err != nil {
-			log.Println("Error loading .env file, assuming default dev settings.")
-		}
-	} else {
-		log.Println("Starting in production mode, configuration must be set via environment variables.")
-	}
 	start := time.Now()
-
-	dbCFG, err := databaseCfg.NewDBConfig()
-	if err != nil {
-		log.Fatalf("dbconnection error, %e", err)
-	}
-
-	config.Initialize(dbCFG)
-	host := os.Getenv("API_HOST")
-	port := os.Getenv("API_PORT")
-	log.Println("server running on port:", port)
-
-	// appConfig := config.AppConfig
-
 	router := http.NewServeMux()
+
+	config.Initialise()
+	Config := config.Config
+	port := strconv.Itoa(Config.APIPort)
+
+	logger.Info("Initializing server on port: %s", port)
 
 	v1 := v1.NewRouter()
 	api := "/api/v1/"
 	router.Handle(api, http.StripPrefix(strings.TrimRight(api, "/"), v1))
 	router.Handle("/metrics", promhttp.Handler())
+
+	logger.Debug("Routes configured. API path: %s", api)
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
@@ -83,21 +60,22 @@ func main() {
 
 	// Start the server in a goroutine.
 	go func() {
-		fmt.Println("Server goroutine starting...")
+		logger.Info("Starting server...")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Printf("Error starting server: %v\n", err)
+			logger.Error("Error starting server: %v", err)
 		}
 	}()
-	healthEndpoint := "http://" + host + ":" + port + api + "healthz"
-	fmt.Println(healthEndpoint)
+	healthEndpoint := "http://" + Config.APIHost + ":" + port + api + "healthz"
+
+	logger.Debug("Health check endpoint: %s", healthEndpoint)
+
 	go func() {
 		for {
 
 			resp, err := http.Get(healthEndpoint)
 			if err == nil && resp.StatusCode == http.StatusOK {
-				log.Println("Server is ready.")
 				elapsed := time.Since(start)
-				log.Printf("Server ready in %s", elapsed)
+				logger.Info("Server ready in %s", elapsed)
 				resp.Body.Close()
 				break
 			}
@@ -110,7 +88,7 @@ func main() {
 
 	// Block until a signal is received.
 	<-quit
-	fmt.Println("Shutting down server...")
+	logger.Info("Shutdown signal received")
 
 	// context with a timeout for the shutdown process.
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -118,9 +96,9 @@ func main() {
 
 	//gracefully shut down the server.
 	if err := server.Shutdown(ctx); err != nil {
-		fmt.Printf("server shutdown failed: %v", err)
+		logger.Error("Server shutdown failed: %v", err)
 	}
 
-	fmt.Println("Server gracefully stopped.")
+	logger.Info("Server gracefully stopped")
 
 }

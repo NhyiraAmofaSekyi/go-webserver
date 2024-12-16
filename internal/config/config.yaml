@@ -1,0 +1,18 @@
+environments:
+  local:
+    server:
+      host: "localhost"
+      port: 8080
+      client_url: "http://localhost:3000"
+      debug: true
+
+
+  production:
+
+    server:
+      host: "0.0.0.0"
+      port: 8081
+      client_url: "https://myapp.com"
+      debug: false
+
+    

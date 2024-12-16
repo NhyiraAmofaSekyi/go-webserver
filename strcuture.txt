@@ -1,0 +1,84 @@
+.
+├── Dockerfile
+├── actions.yaml
+├── awstest.png
+├── db-test
+│   └── init.sql
+├── docker-compose.yaml
+├── go-webserver
+├── go.mod
+├── go.sum
+├── internal
+│   ├── config
+│   │   ├── config.go
+│   │   └── config.yaml
+│   ├── db
+│   │   ├── database
+│   │   │   ├── db.go
+│   │   │   ├── models.go
+│   │   │   └── users.sql.go
+│   │   ├── dbCfg.go
+│   │   ├── queries
+│   │   │   └── users.sql
+│   │   ├── schema
+│   │   │   └── 001_users.sql
+│   │   └── sqlc
+│   │       └── sqlc.yaml
+│   ├── logger
+│   │   └── logger.go
+│   ├── middleware
+│   │   ├── auth.go
+│   │   ├── cors.go
+│   │   ├── logging.go
+│   │   ├── middleware.go
+│   │   └── monitoring.go
+│   ├── monitoring
+│   │   └── metrics.go
+│   ├── templates
+│   │   └── file_form.html
+│   └── v1
+│       ├── auth
+│       │   ├── auth_test.go
+│       │   ├── handlers.go
+│       │   └── routes.go
+│       ├── handlers.go
+│       ├── routes.go
+│       ├── users
+│       │   ├── handlers.go
+│       │   └── routes.go
+│       └── v1_test.go
+├── logs
+│   └── server_2024-12-16.log
+├── main.go
+├── monitoring-test
+│   ├── grafana
+│   │   ├── dashboard.yaml
+│   │   ├── dashboards
+│   │   │   └── http_metrics_dashboard.json
+│   │   ├── data
+│   │   │   ├── alerting
+│   │   │   │   └── 1
+│   │   │   │       └── __default__.tmpl
+│   │   │   ├── csv
+│   │   │   ├── dashboards
+│   │   │   ├── grafana.db
+│   │   │   ├── pdf
+│   │   │   ├── plugins
+│   │   │   └── png
+│   │   └── datasource.yaml
+│   └── prom
+│       └── prometheus.yaml
+├── prometheus.yaml
+├── readme.md
+├── strcuture.txt
+├── test_output.txt
+└── utils
+    ├── aws
+    │   └── awsS3
+    │       └── S3.go
+    ├── email
+    │   ├── email.go
+    │   └── email.html
+    └── json.go
+
+33 directories, 49 files
