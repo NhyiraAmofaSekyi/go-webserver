@@ -25,6 +25,11 @@ const (
 )
 
 func Init(debugMode bool) {
+	err := os.MkdirAll("logs", 0755)
+	if err != nil {
+		log.Fatalf("Failed to create logs directory: %v", err)
+	}
+
 	file, err := os.OpenFile(
 		fmt.Sprintf("logs/server_%s.log", time.Now().Format("2006-01-02")),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,

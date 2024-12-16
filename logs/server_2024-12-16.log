@@ -51,3 +51,15 @@
 [32mINFO: [0m2024/12/16 11:47:13 main.go:78: Server ready in 57.52983ms
 [32mINFO: [0m2024/12/16 11:47:19 main.go:91: Shutdown signal received
 [32mINFO: [0m2024/12/16 11:47:19 main.go:102: Server gracefully stopped
+[33mDEBUG: [0m2024/12/16 16:15:50 config.go:78: Initializing configuration for environment: development
+[33mDEBUG: [0m2024/12/16 16:15:50 config.go:84: Database URL loaded from environment
+[32mINFO: [0m2024/12/16 16:15:50 config.go:93: Database connection established successfully
+[33mDEBUG: [0m2024/12/16 16:15:50 config.go:101: Base configuration created: &{DBConfig:0xc00004e820 ClientURL:http://localhost:3000 APIHost:localhost APIPort:8080}
+[32mINFO: [0m2024/12/16 16:15:50 main.go:31: Initializing server on port: 8080
+[33mDEBUG: [0m2024/12/16 16:15:50 main.go:38: Routes configured. API path: /api/v1/
+[33mDEBUG: [0m2024/12/16 16:15:50 main.go:70: Health check endpoint: http://localhost:8080/api/v1/healthz
+[32mINFO: [0m2024/12/16 16:15:50 main.go:63: Starting server...
+[32mINFO: [0m2024/12/16 16:15:50 logging.go:44: 200 GET /api/v1/healthz 150.105µs
+[32mINFO: [0m2024/12/16 16:15:50 main.go:78: Server ready in 74.857011ms
+[32mINFO: [0m2024/12/16 16:16:00 main.go:91: Shutdown signal received
+[32mINFO: [0m2024/12/16 16:16:00 main.go:102: Server gracefully stopped
