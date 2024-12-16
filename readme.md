@@ -35,10 +35,10 @@ This command builds the Docker image with the tag `gowebserver:0.0.1`, using the
 After building the image, run the server using:
 
 ```bash
-docker run -d -p 8080:8080 --name mygowebserver gowebserver:0.0.1
+docker run -d -p 8080:8080 --name gowebserver gowebserver:0.0.1
 ```
 
-This command runs the Docker container in detached mode, maps port 8080 on the host to port 8080 in the container, and names the container `mygowebserver`.
+This command runs the Docker container in detached mode, maps port 8080 on the host to port 8080 in the container, and names the container `gowebserver`.
 
 ## Testing
 
@@ -57,13 +57,13 @@ This command sends a GET request to the health check endpoint. The server should
 To stop the running container, use:
 
 ```bash
-docker stop mygowebserver
+docker stop gowebserver
 ```
 
 And to remove the container:
 
 ```bash
-docker rm mygowebserver
+docker rm gowebserver
 ```
 
 ## Additional Information

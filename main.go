@@ -40,7 +40,6 @@ func main() {
 	stack := middleware.CreateStack(
 		middleware.Logging,
 		middleware.CorsWrapper,
-		middleware.Monitoring,
 	)
 
 	server := &http.Server{

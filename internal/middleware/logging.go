@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
+	monitoring "github.com/NhyiraAmofaSekyi/go-webserver/internal/monitoring"
 )
 
 type wrappedWriter struct {
@@ -36,12 +37,14 @@ func Logging(next http.Handler) http.Handler {
 		next.ServeHTTP(wrapped, req)
 
 		duration := time.Since(start)
-		if wrapped.statusCode >= 500 {
-			logger.Error("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
-		} else if wrapped.statusCode >= 400 {
-			logger.Info("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
+		if wrapped.statusCode > 499 {
+			logger.Error("%d %s %s %v", wrapped.statusCode, req.Method, req.URL.Path, duration)
+			monitoring.HttpRequestErrorsTotal.WithLabelValues("api", req.Method, req.URL.Path, http.StatusText(wrapped.statusCode)).Inc()
 		} else {
-			logger.Info("%d %s %s %v", wrapped.statusCode, r.Method, r.URL.Path, duration)
+			logger.Info("%d %s %s %v", wrapped.statusCode, req.Method, req.URL.Path, duration)
 		}
+
+		monitoring.HttpRequestsTotal.WithLabelValues("api", req.Method, req.URL.Path).Inc()
+		monitoring.HttpRequestDuration.WithLabelValues("api", req.Method, req.URL.Path).Observe(time.Since(start).Seconds())
 	})
 }
