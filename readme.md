@@ -1,5 +1,7 @@
 # Go Web Server
 
+[![codecov](https://codecov.io/gh/NhyiraAmofaSekyi/go-webserver/branch/main/graph/badge.svg)](https://codecov.io/gh/NhyiraAmofaSekyi/go-webserver)
+
 ## Overview
 
 This project contains a Go web server that is containerized using Docker. The server responds to web requests and is designed to be lightweight and efficient, suitable for a variety of backend tasks.

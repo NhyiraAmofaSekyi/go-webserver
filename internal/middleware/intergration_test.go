@@ -7,12 +7,16 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
 )
 
 func TestMiddlewareStackIntegration(t *testing.T) {
+
+	corsConfig = nil
+	corsOnce = sync.Once{}
 	// Setup temporary directory for logs
 	tmpDir, err := os.MkdirTemp("", "middleware_integration_*")
 	if err != nil {

@@ -25,3 +25,17 @@ jobs:
 
       - name: Test
         run: go test -v -mod=vendor ./...
+      
+      - name: Test with Coverage
+        run: |
+          go test -v -mod=vendor -race -coverprofile=coverage.out -covermode=atomic ./...
+          go tool cover -func=coverage.out
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true

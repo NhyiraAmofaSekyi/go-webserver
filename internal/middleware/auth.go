@@ -10,8 +10,6 @@ import (
 	"github.com/NhyiraAmofaSekyi/go-webserver/utils"
 )
 
-var hmacSampleSecret = []byte("sample")
-
 type AuthUserIDKey string
 type ServiceKey string
 
