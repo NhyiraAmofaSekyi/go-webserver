@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/github/NhyiraAmofaSekyi/go-webserver/graph/badge.svg?token=YLNAWU1AL9)](https://codecov.io/github/NhyiraAmofaSekyi/go-webserver)
 
-https://codecov.io/github/NhyiraAmofaSekyi/go-webserver/graphs/tree.svg?token=YLNAWU1AL9
+![Coverage Graph](https://codecov.io/github/NhyiraAmofaSekyi/go-webserver/graphs/tree.svg?token=YLNAWU1AL9)
 
 ## Overview
 
