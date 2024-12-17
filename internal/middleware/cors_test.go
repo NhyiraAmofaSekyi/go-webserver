@@ -28,9 +28,9 @@ func TestCorsWrapper(t *testing.T) {
 			name: "Custom Global Config",
 			setupConfig: &CorsConfig{
 				AllowedOrigins: []string{"http://example.com"},
-				AllowedMethods: []string{"GET", "POST"},
+				AllowedMethods: []string{"GET", "POST", "OPTIONS"},
 				AllowedHeaders: []string{"X-Custom-Header"},
-				Credentials:    false,
+				Credentials:    true,
 				MaxAge:         "3600",
 			},
 			requestMethod:  "OPTIONS",
@@ -38,7 +38,7 @@ func TestCorsWrapper(t *testing.T) {
 			expectedStatus: http.StatusOK,
 			expectedHeaders: map[string]string{
 				"Access-Control-Allow-Origin":      "http://example.com",
-				"Access-Control-Allow-Methods":     "GET, POST",
+				"Access-Control-Allow-Methods":     "GET, POST, OPTIONS",
 				"Access-Control-Allow-Headers":     "X-Custom-Header",
 				"Access-Control-Allow-Credentials": "true",
 				"Access-Control-Max-Age":           "3600",

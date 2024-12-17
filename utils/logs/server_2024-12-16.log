@@ -1,2 +1,0 @@
-[31mERROR: [0m2024/12/16 16:16:31 json.go:17: Responding with 5XX error: Internal server error
-[31mERROR: [0m2024/12/16 16:16:31 json.go:32: Error marshalling JSON: json: unsupported type: chan int

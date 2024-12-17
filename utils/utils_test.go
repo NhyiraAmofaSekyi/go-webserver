@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/logger"
@@ -119,6 +120,8 @@ func TestRespondWithJSON(t *testing.T) {
 			expectError:  true,
 		},
 	}
+
+	defer os.RemoveAll("logs")
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
