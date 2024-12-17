@@ -1,6 +1,6 @@
 # Go Web Server
 
-[![codecov](https://codecov.io/gh/NhyiraAmofaSekyi/go-webserver/branch/main/graph/badge.svg)](https://codecov.io/gh/NhyiraAmofaSekyi/go-webserver)
+[![codecov](https://codecov.io/github/NhyiraAmofaSekyi/go-webserver/graph/badge.svg?token=YLNAWU1AL9)](https://codecov.io/github/NhyiraAmofaSekyi/go-webserver)
 
 ## Overview
 
