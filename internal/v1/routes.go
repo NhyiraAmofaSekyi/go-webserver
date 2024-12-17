@@ -4,7 +4,6 @@ package v1
 import (
 	"net/http"
 
-	"github.com/NhyiraAmofaSekyi/go-webserver/internal/middleware"
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/v1/auth"
 	"github.com/NhyiraAmofaSekyi/go-webserver/internal/v1/users"
 )
@@ -16,7 +15,7 @@ func NewRouter() *http.ServeMux {
 	userRouter := users.NewRouter()
 
 	v1Router.HandleFunc("GET /healthz", HealthzHandler) // Note the path is just "/healthz" now
-	v1Router.HandleFunc("GET /secure", middleware.AuthMiddleware(SecureHandler))
+	v1Router.HandleFunc("GET /secure", SecureHandler)
 	v1Router.Handle("/auth/", http.StripPrefix("/auth", authRouter))
 	v1Router.Handle("/users/", http.StripPrefix("/users", userRouter))
 

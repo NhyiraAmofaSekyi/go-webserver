@@ -13,7 +13,7 @@ import (
 var hmacSampleSecret = []byte("sample")
 
 // Function to generate a new JWT for a given name
-func generateJWT(name string) (string, error) {
+func GenerateJWT(name string) (string, error) {
 	expirationTime := time.Now().Add(1 * time.Hour).Unix()
 	// Create a new token object, specifying signing method and the claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -64,7 +64,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jwtToken, err := generateJWT(params.Name)
+	jwtToken, err := GenerateJWT(params.Name)
 	if err != nil {
 		utils.RespondWithJSON(w, http.StatusBadRequest, fmt.Sprintf("Error passing json: %v", err))
 		return
