@@ -21,7 +21,7 @@ func TestGenerateJWT(t *testing.T) {
 		{
 			name:        "Empty Username",
 			userName:    "",
-			shouldError: true, // Current implementation allows empty names
+			shouldError: true,
 		},
 	}
 
