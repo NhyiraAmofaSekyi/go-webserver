@@ -37,6 +37,7 @@ func TestLogging(t *testing.T) {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
 	defer os.RemoveAll(tmpDir)
+	defer os.RemoveAll("logs")
 
 	// Save current directory
 	currentDir, err := os.Getwd()
